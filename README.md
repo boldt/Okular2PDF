@@ -11,7 +11,7 @@ PDF can be opened with other PDF readers and it can be printed as well.
 
 ### Supports
 
-* PDF files (because the the Open Source PDF Library iText is used)
+* PDF files (because the Open Source PDF Library `iText` is used)
 * Supported annotations: Yellow Highlighter
 
 ### Get it:
@@ -27,7 +27,7 @@ PDF can be opened with other PDF readers and it can be printed as well.
 
 	java -jar target/Okular2PDF-*.jar NAME.okular
 
-You will get the annotated PDF in the same directory as the NAME.okular:
+You will get the annotated PDF in the same directory as the `NAME.okular`:
 
     NAME.okular.annotated.pdf
 
