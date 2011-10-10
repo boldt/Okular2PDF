@@ -22,7 +22,7 @@ import de.dennisboldt.okular.Page;
  * Parsing of the metadata.xml
  *
  * @author Dennis Boldt
- *
+ * @see http://api.kde.org/4.7-api/kdegraphics-apidocs/okular/html/annotations_8cpp_source.html#l01727
  */
 public class XMLMetadataParser {
 

@@ -11,21 +11,17 @@ PDF can be opened with other PDF readers and it can be printed as well.
 
 ### Get it:
 
-TODO
+	git clone TODO
 
-### To build:
+### Build it:
 
-mvn jar:jar is not configured yet.
+    mvn package
 
 ### Run it:
 
-Now:
-    Create a new Maven project in Eclipse and execute the program there.
+	java -jar target/Okular2PDF-*.jar NAME.okular
 
-Later:
-	java -jar Okular2PDF.jar NAME.okular
-
-You will get the annotated PDF called:
+You will get the annotated PDF called in the same directory as NAME.okular:
 
     NAME.okular.annotated.pdf
 
