@@ -45,7 +45,7 @@ public class CreatePDF {
 		for (int i = 0; i < pages; i++) {
 
 			PdfContentByte under = writer.getDirectContentUnder();
-			under.setRGBColorFill(0xFF, 0xD7, 0x00);
+			under.setRGBColorFill(0xFF, 0xFF, 0x00);
 			Page pl = pagesList.get(i);
 			if(pl != null) {
 				List<Annotation> annotations = pl.getAnnotations();

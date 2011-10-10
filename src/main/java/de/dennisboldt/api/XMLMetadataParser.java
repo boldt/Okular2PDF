@@ -83,13 +83,28 @@ public class XMLMetadataParser {
 						if(type == 4) {
 
 							// Get the boundary
-							NodeList boundaries = annotation.getElementsByTagName("boundary");
+							NodeList boundaries = annotation.getElementsByTagName("quad");
 							if(boundaries != null && boundaries.getLength() > 0) {
 								Element boundary = (Element) boundaries.item(0);
-								Double l = Double.parseDouble(boundary.getAttribute("l"));
-								Double r = Double.parseDouble(boundary.getAttribute("r"));
-								Double t = Double.parseDouble(boundary.getAttribute("t"));
-								Double b = Double.parseDouble(boundary.getAttribute("b"));
+								/*
+								 * The point of the quad are as follows:
+								 *
+								 * (ax,ay) --> (bx,by)
+								 *                |
+								 *                v
+								 * (dx,dy) <-- (cx,cy)
+								 *
+								 * Thus:
+								 * ax = dx => Left border (l)
+								 * bx = cx => Right border (r)
+								 * ay = by => Top border (t)
+								 * dy = cy => Bottom border (b)
+								 *
+								 */
+								Double l = Double.parseDouble(boundary.getAttribute("ax"));
+								Double r = Double.parseDouble(boundary.getAttribute("cx"));
+								Double t = Double.parseDouble(boundary.getAttribute("by"));
+								Double b = Double.parseDouble(boundary.getAttribute("dy"));
 								Annotation annotationOkular = new Annotation(l, r, t, b, type);
 								//System.out.println("    l: " + l);
 								//System.out.println("    r: " + r);
