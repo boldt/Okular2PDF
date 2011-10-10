@@ -3,6 +3,8 @@
   <groupId>de.dennis-boldt</groupId>
   <artifactId>Okular2PDF</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>Okular2PDF</name>
   <build>
     <plugins>
       <plugin>
