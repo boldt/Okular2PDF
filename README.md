@@ -22,7 +22,7 @@ PDF can be opened with other PDF readers and it can be printed as well.
 
 	java -jar target/Okular2PDF-*.jar NAME.okular
 
-You will get the annotated PDF in the same directory called NAME.okular:
+You will get the annotated PDF in the same directory as the NAME.okular:
 
     NAME.okular.annotated.pdf
 
