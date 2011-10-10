@@ -11,17 +11,18 @@ PDF can be opened with other PDF readers and it can be printed as well.
 
 ### Get it:
 
-	git clone TODO
+	git clone git://github.com/boldt/Okular2PDF.git
 
 ### Build it:
 
+    cd Okular2PDF
     mvn package
 
 ### Run it:
 
 	java -jar target/Okular2PDF-*.jar NAME.okular
 
-You will get the annotated PDF called in the same directory as NAME.okular:
+You will get the annotated PDF in the same directory called NAME.okular:
 
     NAME.okular.annotated.pdf
 
