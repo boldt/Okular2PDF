@@ -6,8 +6,13 @@ Okular does not support the export of an annotated PDF to another PDF
 or the printing of an annotated PDF (October 2010, see the resources below).
 It is just possible to export the annotations and the PDF to an "Okular
 Document Archive". Based on this archive, I decided to create this small
-project to get the "Yellow Higlighter" exported to a new PDF. This annotated
+project to get the "Yellow Highlighter" exported to a new PDF. This annotated
 PDF can be opened with other PDF readers and it can be printed as well.
+
+### Supports
+
+* PDF files (because the the Open Source PDF Library iText is used)
+* Supported annotations: Yellow Highlighter
 
 ### Get it:
 
@@ -29,5 +34,6 @@ You will get the annotated PDF in the same directory as the NAME.okular:
 Resources
 ---
   - [Home of Okular2PDF](http://www.dennis-boldt.de/Okular2PDF)
+  - [iText - PDF Library](http://itextpdf.com/)
   - [Bug 151614 - store annotations with documents](http://bugs.kde.org/show_bug.cgi?id=151614)
   - [Bug 159005 - Print document with annotations](http://bugs.kde.org/show_bug.cgi?id=159005)
