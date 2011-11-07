@@ -87,18 +87,18 @@ public class Main {
 		// Step 3: Read the metadata.xml file
 		XMLMetadataParser meta = new XMLMetadataParser(fileMetadata);
 
-		// Step 4: Create temporarily PDF file for the Yellow Highlighter
+		// Step 4: Create temporarily PDF files
 		PdfReader reader = new PdfReader(fileSource);
 		Rectangle psize = reader.getPageSize(1);
+
+		// Yellow Highlighter
 		new CreatePDF(psize.getWidth(), psize.getHeight(), fileTempHighlighter, reader.getNumberOfPages(), meta, 4);
 
-		// Step 5: Merge the temporarily PDF and the PDF file
-		new MergePDFs(fileSource, fileTempHighlighter, fileTemp);
-
-		// Step 6: Create temporarily PDF file for the Inline notes
+		// Inline notes
 		new CreatePDF(psize.getWidth(), psize.getHeight(), fileTempInlineNote, reader.getNumberOfPages(), meta, 1);
 
-		// Step 7: Merge the temporarily PDF and the PDF file
+		// Step 5: Merge the temporarily PDFs and the PDF file
+		new MergePDFs(fileSource, fileTempHighlighter, fileTemp);
 		new MergePDFs(fileTempInlineNote, fileTemp, fileOutput);
 
 		// Step 8: Remove the unzipped files and the temporarily file.

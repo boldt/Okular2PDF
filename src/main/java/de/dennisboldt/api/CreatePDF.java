@@ -36,7 +36,7 @@ public class CreatePDF {
 
 		Map<Integer, Page> pagesList = meta.getPagesByType(type);
 
-		System.out.println("(4) Create a new PDF of size (" + paperwidth + "," + paperheight + ")");
+		System.out.println("(4) Create a new PDF of size (" + paperwidth + "," + paperheight + ") at " + path);
 
 		this.paperwidth = paperwidth;
 		this.paperheight = paperheight;
@@ -49,8 +49,9 @@ public class CreatePDF {
 		document.open();
 		System.out.println("    Draw the rectangles");
 		for (int i = 0; i < pages; i++) {
-
+			//System.out.println("Page " + i);
 			PdfContentByte under = writer.getDirectContentUnder();
+
 			Page pl = pagesList.get(i);
 			if(pl != null) {
 				List<Annotation> annotations = pl.getAnnotations();
@@ -61,37 +62,46 @@ public class CreatePDF {
 					int t = (int)(paperheight - (annotation.getT() * paperheight));
 					int b = (int)(paperheight - (annotation.getB() * paperheight));
 					under.rectangle(l, b, r - l, t - b);
-					under.fill();
 
 					// Add some text...
 					if(type == 1) {
 
-						under.setRGBColorFill(0x00, 0x00, 0x00); // TODO: Make it dynamicaly based on th document
-
-				    	ColumnText ct = new ColumnText(under);
+						PdfContentByte cb = writer.getDirectContent();
+						cb.setRGBColorFill(0x00, 0x00, 0x00); // TODO: Make it dynamicaly based on th document
+				    	ColumnText ct = new ColumnText(cb);
 
 				        // Add some test text
 			        	Phrase p = new Phrase(annotation.getText());
+			        	ct.setSimpleColumn(l+2, b, r, t, 14, Element.ALIGN_JUSTIFIED);
 			        	ct.addText(p);
-				    	ct.setSimpleColumn(l+2, b, r, t, 14, Element.ALIGN_JUSTIFIED);
 				    	ct.go();
-				    	under.fill();
 
+				    	cb.fill();
+
+				    	/*
 				    	float fl = Float.valueOf(l).floatValue();
 				    	float fb = Float.valueOf(b).floatValue();
 				    	float fr = Float.valueOf(r-l).floatValue();
 				    	float ft = Float.valueOf(t-b).floatValue();
 
-
+						// Fillstroke
 				        PdfContentByte cb = writer.getDirectContent();
 				        cb.setColorStroke(Color.black);
 				        cb.rectangle(fl, fb, fr, ft);
 				        cb.stroke();
-
+				    	 */
 					}
 				}
 			}
-			document.newPage();
+
+			if(type == 1) {
+				// Add border-lines
+				under.fillStroke();
+			} else {
+				under.fill();
+			}
+			boolean b = document.newPage();
+			//System.out.println(b);
 		}
 		document.close();
 	}

@@ -125,7 +125,7 @@ public class XMLMetadataParser {
 								Double t = Double.parseDouble(boundary.getAttribute("b"));
 								Double b = Double.parseDouble(boundary.getAttribute("t"));
 
-								System.out.println("Inline note found at " + l + " - " + r + " - " + b + " - " + t);
+								//System.out.println("Inline note found at " + l + " - " + r + " - " + b + " - " + t);
 
 								NodeList escapedText = annotation.getElementsByTagName("escapedText");
 								if(escapedText != null && escapedText.getLength() > 0) {
