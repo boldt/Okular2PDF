@@ -79,6 +79,7 @@ public class XMLMetadataParser {
 						Element annotation = (Element) annotations.item(j);
 						Integer type = Integer.parseInt(annotation.getAttribute("type"));
 						//System.out.println("  Annotation type:" + type);
+
 						// Highlight
 						if(type == 4) {
 
@@ -112,6 +113,31 @@ public class XMLMetadataParser {
 								//System.out.println("    b: " + b);
 								pageOkular.addAnnotation(annotationOkular);
 							}
+						}
+						// Type 1: Inline note
+						else {
+
+							NodeList boundaries = annotation.getElementsByTagName("boundary");
+							if(boundaries != null && boundaries.getLength() > 0) {
+								Element boundary = (Element) boundaries.item(0);
+								Double l = Double.parseDouble(boundary.getAttribute("l"));
+								Double r = Double.parseDouble(boundary.getAttribute("r"));
+								Double t = Double.parseDouble(boundary.getAttribute("b"));
+								Double b = Double.parseDouble(boundary.getAttribute("t"));
+
+								System.out.println("Inline note found at " + l + " - " + r + " - " + b + " - " + t);
+
+								NodeList escapedText = annotation.getElementsByTagName("escapedText");
+								if(escapedText != null && escapedText.getLength() > 0) {
+									Element textElement = (Element) escapedText.item(0);
+									String text = textElement.getTextContent();
+									Annotation annotationOkular = new Annotation(l, r, t, b, type, text);
+									pageOkular.addAnnotation(annotationOkular);
+								}
+							}
+
+
+
 						}
 					}
 				}

@@ -1,6 +1,7 @@
 package de.dennisboldt.api;
 
 import java.io.FileOutputStream;
+import java.text.DecimalFormat;
 
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfContentByte;
@@ -50,10 +51,16 @@ public class MergePDFs {
 			Rectangle fg_size = fg.getPageSize(1);
 			Rectangle bg_size = bg.getPageSize(1);
 
-			if (fg_size.getHeight() != bg_size.getHeight()
-					|| fg_size.getWidth() != bg_size.getWidth()) {
+			// Just use two fractional digits
+			DecimalFormat df = new DecimalFormat("0.00");
+			if (!df.format(fg_size.getHeight()).equals(df.format(bg_size.getHeight()))
+					|| !df.format(fg_size.getWidth()).equals(df.format(bg_size.getWidth()))) {
 				System.err
 						.println("Geoemetry of the documents is not the same.");
+				System.err.println(fg_size.getHeight() + "!="
+						+ bg_size.getHeight());
+				System.err.println(fg_size.getWidth() + "!="
+						+ bg_size.getWidth());
 				System.exit(0);
 
 			}

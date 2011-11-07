@@ -17,6 +17,8 @@ public class Annotation {
 	// The type of the annotation
 	private Integer type = null;
 
+	private String text = null;
+
 	/**
 	 *
 	 * @param l The l-coordinate
@@ -31,6 +33,15 @@ public class Annotation {
 		this.t = t;
 		this.b = b;
 		this.type = type;
+	}
+
+	public Annotation(Double l, Double r, Double t, Double b, Integer type, String text) {
+		this.l = l;
+		this.r = r;
+		this.t = t;
+		this.b = b;
+		this.type = type;
+		this.text = text;
 	}
 
 	public Double getL() {
@@ -51,5 +62,9 @@ public class Annotation {
 
 	public Integer getType() {
 		return type;
+	}
+
+	public String getText() {
+		return text;
 	}
 }
