@@ -12,7 +12,7 @@ PDF can be opened with other PDF readers and it can be printed as well.
 ### Supports
 
 * PDF files (because the Open Source PDF Library `iText` is used)
-* Supported annotations: Yellow Highlighter
+* Supported annotations: Yellow Highlighter and inline notes
 
 ### Get it:
 
@@ -37,3 +37,4 @@ Resources
   - [iText - PDF Library](http://itextpdf.com/)
   - [Bug 151614 - store annotations with documents](http://bugs.kde.org/show_bug.cgi?id=151614)
   - [Bug 159005 - Print document with annotations](http://bugs.kde.org/show_bug.cgi?id=159005)
+
