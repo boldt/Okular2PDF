@@ -1,6 +1,5 @@
 package de.dennisboldt.api;
 
-import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.List;
@@ -56,7 +55,22 @@ public class CreatePDF {
 			if(pl != null) {
 				List<Annotation> annotations = pl.getAnnotations();
 				for (Annotation annotation : annotations) {
-					under.setRGBColorFill(0xFF, 0xFF, 0x00); // TODO: Make it dynamicaly based on th document
+
+					// The color in #RRGGBB
+					String color = annotation.getColor();
+					if(color != null && color.length() == 7) {
+						// Convert to int
+						int r = Integer.decode("0x" + color.substring(1, 3));
+						int g = Integer.decode("0x" + color.substring(3, 5));
+						int b = Integer.decode("0x" + color.substring(5, 7));
+
+						under.setRGBColorFill(r, g, b);
+
+					} else {
+						// Standard color is yellow
+						under.setRGBColorFill(0xFF, 0xFF, 0x00);
+					}
+
 					int l = (int) (annotation.getL() * paperwidth);
 					int r = (int) (annotation.getR() * paperwidth);
 					int t = (int)(paperheight - (annotation.getT() * paperheight));

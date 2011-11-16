@@ -19,6 +19,9 @@ public class Annotation {
 
 	private String text = null;
 
+	// The color like #RRGGBB
+	private String color = null;
+
 	/**
 	 *
 	 * @param l The l-coordinate
@@ -35,12 +38,7 @@ public class Annotation {
 		this.type = type;
 	}
 
-	public Annotation(Double l, Double r, Double t, Double b, Integer type, String text) {
-		this.l = l;
-		this.r = r;
-		this.t = t;
-		this.b = b;
-		this.type = type;
+	public void setText(String text) {
 		this.text = text;
 	}
 
@@ -66,5 +64,13 @@ public class Annotation {
 
 	public String getText() {
 		return text;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public String getColor() {
+		return color;
 	}
 }

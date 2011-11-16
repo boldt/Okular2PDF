@@ -80,11 +80,22 @@ public class XMLMetadataParser {
 						Integer type = Integer.parseInt(annotation.getAttribute("type"));
 						//System.out.println("  Annotation type:" + type);
 
+						String color = null;
+
+						NodeList basees = annotation.getElementsByTagName("base");
+						if(basees != null && basees.getLength() == 1) {
+							Element base = (Element) basees.item(0);
+							color = base.getAttribute("color");
+						}
+
+						Annotation annotationOkular = null;
+
 						// Highlight
 						if(type == 4) {
 
 							// Get the boundary
 							NodeList boundaries = annotation.getElementsByTagName("quad");
+							// TODO: equals 1 ?
 							if(boundaries != null && boundaries.getLength() > 0) {
 								Element boundary = (Element) boundaries.item(0);
 								/*
@@ -106,12 +117,11 @@ public class XMLMetadataParser {
 								Double r = Double.parseDouble(boundary.getAttribute("cx"));
 								Double t = Double.parseDouble(boundary.getAttribute("by"));
 								Double b = Double.parseDouble(boundary.getAttribute("dy"));
-								Annotation annotationOkular = new Annotation(l, r, t, b, type);
+								annotationOkular = new Annotation(l, r, t, b, type);
 								//System.out.println("    l: " + l);
 								//System.out.println("    r: " + r);
 								//System.out.println("    t: " + t);
 								//System.out.println("    b: " + b);
-								pageOkular.addAnnotation(annotationOkular);
 							}
 						}
 						// Type 1: Inline note
@@ -131,14 +141,18 @@ public class XMLMetadataParser {
 								if(escapedText != null && escapedText.getLength() > 0) {
 									Element textElement = (Element) escapedText.item(0);
 									String text = textElement.getTextContent();
-									Annotation annotationOkular = new Annotation(l, r, t, b, type, text);
-									pageOkular.addAnnotation(annotationOkular);
+									annotationOkular = new Annotation(l, r, t, b, type);
+									annotationOkular.setText(text);
 								}
 							}
-
-
-
 						}
+
+						// Set up the color
+						annotationOkular.setColor(color);
+
+						// Add the annotation
+						pageOkular.addAnnotation(annotationOkular);
+
 					}
 				}
 			}
