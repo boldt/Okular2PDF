@@ -30,7 +30,7 @@ public class Unzip {
 		out.close();
 	}
 
-	public Unzip(String file, String destination) throws Exception {
+	public Unzip(File file, String destination) throws Exception {
 
 		System.out.println("(1) Extracting " + file + " to " + destination);
 

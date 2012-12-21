@@ -84,8 +84,9 @@ public class XMLMetadataParser {
 						String author = null;
 						String contents = null;
 						NodeList basees = annotation.getElementsByTagName("base");
+						Element base = null;
 						if(basees != null && basees.getLength() == 1) {
-							Element base = (Element) basees.item(0);
+							base = (Element) basees.item(0);
 							color = base.getAttribute("color");
 							author = base.getAttribute("author");
 							contents = base.getAttribute("contents");
@@ -121,15 +122,11 @@ public class XMLMetadataParser {
 								Double t = Double.parseDouble(boundary.getAttribute("by"));
 								Double b = Double.parseDouble(boundary.getAttribute("dy"));
 
-								annotationOkular = new Annotation(l, r, t, b, type);
+								annotationOkular = new Annotation(l, r, t, b, AnnotationType.YELLOW_HIGHLIGHTER);
 								//System.out.println("    l: " + l);
 								//System.out.println("    r: " + r);
 								//System.out.println("    t: " + t);
 								//System.out.println("    b: " + b);
-								if (author != null && contents != null) {
-									annotationOkular.setText("Author: " + author + ". Annotation: " + contents);
-									System.out.println("Author: " + author + ". Annotation: " + contents);
-								}
 							}
 						}
 						// Type 1: Inline note
@@ -143,14 +140,30 @@ public class XMLMetadataParser {
 								Double t = Double.parseDouble(boundary.getAttribute("b"));
 								Double b = Double.parseDouble(boundary.getAttribute("t"));
 
-								//System.out.println("Inline note found at " + l + " - " + r + " - " + b + " - " + t);
+								// Get the summary
+								String summary = null;
+								NodeList windows = annotation.getElementsByTagName("window");
+								Element window = null;
+								if(windows != null && windows.getLength() == 1) {
+									window = (Element) windows.item(0);
+									summary = window.getAttribute("summary");
+								}
 
-								NodeList escapedText = annotation.getElementsByTagName("escapedText");
-								if(escapedText != null && escapedText.getLength() > 0) {
-									Element textElement = (Element) escapedText.item(0);
-									String text = textElement.getTextContent();
-									annotationOkular = new Annotation(l, r, t, b, type);
-									annotationOkular.setText(text);
+								if("Inline Note".equals(summary)) {
+									NodeList escapedText = annotation.getElementsByTagName("escapedText");
+									if(escapedText != null && escapedText.getLength() > 0) {
+										Element textElement = (Element) escapedText.item(0);
+										String text = textElement.getTextContent();
+										annotationOkular = new Annotation(l, r, t, b, AnnotationType.INLINE_NOTE);
+										annotationOkular.setText(text);
+									}
+								} else if("Note".equals(summary)) {
+									if (author != null && contents != null) {
+										annotationOkular = new Annotation(l, r+0.3, t+0.1, b, AnnotationType.PDF_NOTE);
+										annotationOkular.setText("Author: " + author + "\n" + contents);
+									}
+								} else {
+									System.out.println("ERROR: Unknown annotation type!");
 								}
 							}
 						}
@@ -165,13 +178,15 @@ public class XMLMetadataParser {
 				}
 			}
 		}
+
+
 	}
 
 	public List<Page> getPages() {
 		return pages;
 	}
 
-	public Map<Integer, Page> getPagesByType(Integer type) {
+	public Map<Integer, Page> getPagesByType(AnnotationType type) {
 
 		Map<Integer, Page> pagesByType = new HashMap<Integer, Page>();
 
@@ -179,7 +194,7 @@ public class XMLMetadataParser {
 			Page newPage = new Page(p.getNumber());
 			List<Annotation> annotations = p.getAnnotations();
 			for (Annotation annotation : annotations) {
-				if(annotation.getType() == type) {
+				if(annotation != null && annotation.getType() == type) {
 					newPage.addAnnotation(annotation);
 				}
 			}

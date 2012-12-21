@@ -1,5 +1,6 @@
 package de.dennisboldt.api;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.text.DecimalFormat;
 
@@ -8,7 +9,6 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
-import com.lowagie.text.pdf.PdfAnnotation;
 
 /**
  * Merges to PDFs such that one will be the background and one will be the
@@ -30,15 +30,15 @@ public class MergePDFs {
 	 * @param newFile
 	 *            The new file
 	 */
-	public MergePDFs(String foreground, String background, String newFile) {
+	public MergePDFs(File foreground, File background, File newFile) {
 
-		System.out.println("(5) Merge " + foreground + " and " + background
-				+ " to " + newFile);
+		System.out.println("    Merge " + foreground + " (FG) and " + background
+				+ " (BG) to " + newFile);
 
 		try {
 			// the document we're watermarking
-			PdfReader fg = new PdfReader(foreground);
-			PdfReader bg = new PdfReader(background);
+			PdfReader fg = new PdfReader(foreground.getAbsolutePath());
+			PdfReader bg = new PdfReader(background.getAbsolutePath());
 
 			// Check the amount of pages
 			int fg_num_pages = fg.getNumberOfPages();

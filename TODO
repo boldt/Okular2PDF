@@ -6,3 +6,5 @@
   - Black underlining
   - Cyan Ellipse
 - mvn install -- installation on the linux system
+- MimeTypeCheck
+- Warning: log4j:WARN No appenders could be found for logger (net.sf.jmimemagic.Magic).

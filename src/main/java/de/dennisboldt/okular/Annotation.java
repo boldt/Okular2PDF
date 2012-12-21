@@ -1,5 +1,7 @@
 package de.dennisboldt.okular;
 
+import de.dennisboldt.api.AnnotationType;
+
 /**
  * Represents an Okular Annotation
  *
@@ -15,7 +17,7 @@ public class Annotation {
 	private Double b = null;
 
 	// The type of the annotation
-	private Integer type = null;
+	private AnnotationType type = null;
 
 	private String text = null;
 
@@ -30,7 +32,7 @@ public class Annotation {
 	 * @param b The b-coordinate
 	 * @param type The type of the annotation
 	 */
-	public Annotation(Double l, Double r, Double t, Double b, Integer type) {
+	public Annotation(Double l, Double r, Double t, Double b, AnnotationType type) {
 		this.l = l;
 		this.r = r;
 		this.t = t;
@@ -58,7 +60,7 @@ public class Annotation {
 		return b;
 	}
 
-	public Integer getType() {
+	public AnnotationType getType() {
 		return type;
 	}
 
@@ -72,5 +74,10 @@ public class Annotation {
 
 	public String getColor() {
 		return color;
+	}
+
+	@Override
+	public String toString() {
+		return this.type  + "=" + this.text;
 	}
 }

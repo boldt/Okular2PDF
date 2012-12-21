@@ -2,9 +2,12 @@ package de.dennisboldt.main;
 
 import java.io.File;
 
+import org.apache.commons.io.FileUtils;
+
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfReader;
 
+import de.dennisboldt.api.AnnotationType;
 import de.dennisboldt.api.CreatePDF;
 import de.dennisboldt.api.MergePDFs;
 import de.dennisboldt.api.MimeType;
@@ -26,10 +29,21 @@ public class Main {
 			System.exit(0);
 		}
 
-		String fileOkular = args[0];
+		File fileOkular = new File(args[0]);
 
-		System.out.println(MimeType.getMimeType(fileOkular));
+		/*
+		if("application/zip".trim().equals(MimeType.getMimeType(fileOkular).trim())) {
+			System.out.println("application/zip".trim());
+			System.out.println(MimeType.getMimeType(fileOkular));
+			System.out.println("That is not an Okular file 1!");
+			System.exit(0);
+		}
+		*/
 
+		if(!fileOkular.getName().endsWith(".okular")) {
+			System.out.println("That is not an Okular file 2!");
+			System.exit(0);
+		}
 
 		String directoryTemp = "/tmp/Okular2PDF/";
 
@@ -50,14 +64,8 @@ public class Main {
 		XMLContentParser xmlContent = new XMLContentParser(f);
 		String fileDocument = directoryTemp + xmlContent.getDocumentFileName();
 		String fileMetadata = directoryTemp + xmlContent.getMetadataFileName();
-		String fileTempHighlighter = directoryTemp + "yellow_highlighter.pdf";
-		String fileTempHighlighterAnno = directoryTemp + "annotations.pdf";
-		String fileTempInlineNote = directoryTemp + "inline_note.pdf";
-		String fileTemp = directoryTemp + "temp.pdf";
-		String fileTemp2 = directoryTemp + "temp2.pdf";
-		String fileOutput = fileOkular  + ".annotated.pdf";
 
-		String type = MimeType.getMimeType(fileDocument);
+		String type = MimeType.getMimeType(new File(fileDocument));
 
 		String fileSource = null;
 		// PDF files
@@ -94,23 +102,29 @@ public class Main {
 		Rectangle psize = reader.getPageSize(1);
 
 		// Yellow Highlighter
-		new CreatePDF(psize.getWidth(), psize.getHeight(), fileTempHighlighter, reader.getNumberOfPages(), meta, 4, false);
+		CreatePDF pdf = new CreatePDF(psize.getWidth(), psize.getHeight(), directoryTemp, reader.getNumberOfPages(), meta);
+		File file_inline_note = pdf.doAnnotation(AnnotationType.INLINE_NOTE);
+		File file_pdf_note = pdf.doAnnotation(AnnotationType.PDF_NOTE);
+		File file_yellow_highlighter = pdf.doAnnotation(AnnotationType.YELLOW_HIGHLIGHTER);
+		File fileOutput = new File(fileOkular  + ".annotated.pdf");
+		File tmp0 = new File(directoryTemp + "temp0.pdf");
+		File tmp1 = new File(directoryTemp + "temp1.pdf");
 
-		// annotation symbols
-		new CreatePDF(psize.getWidth(), psize.getHeight(), fileTempHighlighterAnno, reader.getNumberOfPages(), meta, 4, true);
+		System.out.println("(5) Merge files");
 
-		// Inline notes
-		new CreatePDF(psize.getWidth(), psize.getHeight(), fileTempInlineNote, reader.getNumberOfPages(), meta, 1, false);
+		new MergePDFs(new File(fileSource), file_yellow_highlighter, tmp0);
+		new MergePDFs(file_inline_note, tmp0, tmp1);
+		new MergePDFs(file_pdf_note, tmp1, fileOutput);
 
-		// Step 5: Merge the temporarily PDFs and the PDF file
-		new MergePDFs(fileSource, fileTempHighlighter, fileTemp);
-		new MergePDFs(fileTempInlineNote, fileTemp, fileTemp2);
-		new MergePDFs(fileTempHighlighterAnno, fileTemp2, fileOutput);
-
-		// Step 8: Remove the unzipped files and the temporarily file.
-		// TODO: Remove the unziped data
-		// TODO: Remove temp data
-		System.out.println("The new PDF file has been created");
+		// Clean tempfolder
+		File tmpDir = new File(directoryTemp);
+		if(tmpDir.exists() && tmpDir.isDirectory()) {
+			System.out.println("(5) Clean dir " + tmpDir.getAbsolutePath());
+			FileUtils.deleteDirectory(tmpDir);
+		}
+		System.out.println();
+		System.out.println("The new PDF file has been created:");
+		System.out.println(fileOutput.getAbsolutePath());
 	}
 
 }

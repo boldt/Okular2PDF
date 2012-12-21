@@ -38,4 +38,9 @@ public class Page {
 	public List<Annotation> getAnnotations() {
 		return annotations;
 	}
+
+	@Override
+	public String toString() {
+		return annotations.toString();
+	}
 }
