@@ -81,11 +81,14 @@ public class XMLMetadataParser {
 						//System.out.println("  Annotation type:" + type);
 
 						String color = null;
-
+						String author = null;
+						String contents = null;
 						NodeList basees = annotation.getElementsByTagName("base");
 						if(basees != null && basees.getLength() == 1) {
 							Element base = (Element) basees.item(0);
 							color = base.getAttribute("color");
+							author = base.getAttribute("author");
+							contents = base.getAttribute("contents");
 						}
 
 						Annotation annotationOkular = null;
@@ -117,11 +120,16 @@ public class XMLMetadataParser {
 								Double r = Double.parseDouble(boundary.getAttribute("cx"));
 								Double t = Double.parseDouble(boundary.getAttribute("by"));
 								Double b = Double.parseDouble(boundary.getAttribute("dy"));
+
 								annotationOkular = new Annotation(l, r, t, b, type);
 								//System.out.println("    l: " + l);
 								//System.out.println("    r: " + r);
 								//System.out.println("    t: " + t);
 								//System.out.println("    b: " + b);
+								if (author != null && contents != null) {
+									annotationOkular.setText("Author: " + author + ". Annotation: " + contents);
+									System.out.println("Author: " + author + ". Annotation: " + contents);
+								}
 							}
 						}
 						// Type 1: Inline note

@@ -14,6 +14,8 @@ import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfGState;
 import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.PdfString;
+import com.lowagie.text.pdf.PdfAnnotation;
 
 import de.dennisboldt.okular.Annotation;
 import de.dennisboldt.okular.Page;
@@ -30,7 +32,7 @@ public class CreatePDF {
 	float paperheight = 792;
 
 	public CreatePDF(float paperwidth, float paperheight, String path,
-			Integer pages, XMLMetadataParser meta, Integer type) throws FileNotFoundException,
+			Integer pages, XMLMetadataParser meta, Integer type, boolean isToplayer) throws FileNotFoundException,
 			DocumentException {
 
 		Map<Integer, Page> pagesList = meta.getPagesByType(type);
@@ -84,6 +86,8 @@ public class CreatePDF {
 						cb.setRGBColorFill(0x00, 0x00, 0x00); // TODO: Make it dynamicaly based on th document
 				    	ColumnText ct = new ColumnText(cb);
 
+						System.out.println("overlay=" + annotation.getText());
+
 				        // Add some test text
 			        	Phrase p = new Phrase(annotation.getText());
 			        	ct.setSimpleColumn(l+2, b, r, t, 14, Element.ALIGN_JUSTIFIED);
@@ -104,6 +108,20 @@ public class CreatePDF {
 				        cb.rectangle(fl, fb, fr, ft);
 				        cb.stroke();
 				    	 */
+					} else if (type==4) {
+						PdfContentByte cb = writer.getDirectContent();
+						if (!isToplayer) {
+							cb.setRGBColorFill(0x00, 0x00, 0x00); // TODO: Make it dynamicaly based on th document
+							cb.fill();
+						} else {
+							float fl = Float.valueOf(l).floatValue();
+							float fb = Float.valueOf(b).floatValue();
+							float fr = Float.valueOf(r).floatValue();
+							float ft = Float.valueOf(t).floatValue();
+
+							writer.addAnnotation(PdfAnnotation.createText(writer, new Rectangle(fl,fb,fr*2.f,2.f*ft), "Comment", annotation.getText(), false, null));
+							System.out.println("annotation=" + annotation.getText());
+						}
 					}
 				}
 			}
@@ -112,7 +130,7 @@ public class CreatePDF {
 				// Add border-lines
 				under.fillStroke();
 			} else {
-				under.fill();
+				if (!isToplayer)under.fill();
 			}
 			boolean b = document.newPage();
 			//System.out.println(b);

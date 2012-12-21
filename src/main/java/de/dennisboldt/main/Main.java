@@ -51,8 +51,10 @@ public class Main {
 		String fileDocument = directoryTemp + xmlContent.getDocumentFileName();
 		String fileMetadata = directoryTemp + xmlContent.getMetadataFileName();
 		String fileTempHighlighter = directoryTemp + "yellow_highlighter.pdf";
+		String fileTempHighlighterAnno = directoryTemp + "annotations.pdf";
 		String fileTempInlineNote = directoryTemp + "inline_note.pdf";
 		String fileTemp = directoryTemp + "temp.pdf";
+		String fileTemp2 = directoryTemp + "temp2.pdf";
 		String fileOutput = fileOkular  + ".annotated.pdf";
 
 		String type = MimeType.getMimeType(fileDocument);
@@ -92,14 +94,18 @@ public class Main {
 		Rectangle psize = reader.getPageSize(1);
 
 		// Yellow Highlighter
-		new CreatePDF(psize.getWidth(), psize.getHeight(), fileTempHighlighter, reader.getNumberOfPages(), meta, 4);
+		new CreatePDF(psize.getWidth(), psize.getHeight(), fileTempHighlighter, reader.getNumberOfPages(), meta, 4, false);
+
+		// annotation symbols
+		new CreatePDF(psize.getWidth(), psize.getHeight(), fileTempHighlighterAnno, reader.getNumberOfPages(), meta, 4, true);
 
 		// Inline notes
-		new CreatePDF(psize.getWidth(), psize.getHeight(), fileTempInlineNote, reader.getNumberOfPages(), meta, 1);
+		new CreatePDF(psize.getWidth(), psize.getHeight(), fileTempInlineNote, reader.getNumberOfPages(), meta, 1, false);
 
 		// Step 5: Merge the temporarily PDFs and the PDF file
 		new MergePDFs(fileSource, fileTempHighlighter, fileTemp);
-		new MergePDFs(fileTempInlineNote, fileTemp, fileOutput);
+		new MergePDFs(fileTempInlineNote, fileTemp, fileTemp2);
+		new MergePDFs(fileTempHighlighterAnno, fileTemp2, fileOutput);
 
 		// Step 8: Remove the unzipped files and the temporarily file.
 		// TODO: Remove the unziped data
