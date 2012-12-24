@@ -13,6 +13,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.SAXException;
 
 import de.dennisboldt.okular.Annotation;
@@ -130,7 +132,7 @@ public class XMLMetadataParser {
 							}
 						}
 						// Type 1: Inline note
-						else {
+						else if (type == 1){
 
 							NodeList boundaries = annotation.getElementsByTagName("boundary");
 							if(boundaries != null && boundaries.getLength() > 0) {
@@ -163,9 +165,39 @@ public class XMLMetadataParser {
 										annotationOkular.setText("Author: " + author + "\n" + contents);
 									}
 								} else {
-									System.out.println("ERROR: Unknown annotation type!");
+									System.out.println("WARNING: Unknown summary type (" + summary + ")");
+									System.out.println("XML:");
+									try {
+										// @see: http://stackoverflow.com/a/1219806/605890
+										Document document = annotation.getOwnerDocument();
+										DOMImplementationLS domImplLS = (DOMImplementationLS) document.getImplementation();
+										LSSerializer serializer = domImplLS.createLSSerializer();
+										String str = serializer.writeToString(annotation);
+										System.out.println(str);
+									} catch (Exception e) {
+										System.out.println("Exception: XML not readable.");
+									} catch (Error e) {
+										System.out.println("Error: XML not readable.");
+									}
+									continue;
 								}
 							}
+						} else {
+							System.out.println("WARNING: Unknown annotation type (" + type + ")");
+							System.out.println("XML:");
+							try {
+								// @see: http://stackoverflow.com/a/1219806/605890
+								Document document = annotation.getOwnerDocument();
+								DOMImplementationLS domImplLS = (DOMImplementationLS) document.getImplementation();
+								LSSerializer serializer = domImplLS.createLSSerializer();
+								String str = serializer.writeToString(annotation);
+								System.out.println(str);
+							} catch (Exception e) {
+								System.out.println("Exception: XML not readable.");
+							} catch (Error e) {
+								System.out.println("Error: XML not readable.");
+							}
+							continue;
 						}
 
 						// Set up the color
@@ -173,13 +205,10 @@ public class XMLMetadataParser {
 
 						// Add the annotation
 						pageOkular.addAnnotation(annotationOkular);
-
 					}
 				}
 			}
 		}
-
-
 	}
 
 	public List<Page> getPages() {

@@ -44,34 +44,60 @@ public class Annotation {
 		this.text = text;
 	}
 
+	/**
+	 * @return The left position
+	 */
 	public Double getL() {
 		return l;
 	}
 
+	/**
+	 * @return The right position
+	 */
 	public Double getR() {
 		return r;
 	}
 
+	/**
+	 * @return The top position
+	 */
 	public Double getT() {
 		return t;
 	}
 
+	/**
+	 * @return The bottom position
+	 */
 	public Double getB() {
 		return b;
 	}
 
+	/**
+	 * The type of this annotation
+	 * @return
+	 */
 	public AnnotationType getType() {
 		return type;
 	}
 
+	/**
+	 * @return The text. connected to this annotation
+	 */
 	public String getText() {
 		return text;
 	}
 
+	/**
+	 * @param color The color of this annotation in #RRGGBB
+	 */
 	public void setColor(String color) {
+		// TODO: Regex check
 		this.color = color;
 	}
 
+	/**
+	 * @return The color of this annotation in#RRGGBB
+	 */
 	public String getColor() {
 		return color;
 	}
