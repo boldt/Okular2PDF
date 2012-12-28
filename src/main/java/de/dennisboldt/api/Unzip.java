@@ -10,6 +10,9 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.log4j.Logger;
+
+
 /**
  * Unzips a given file
  *
@@ -17,6 +20,8 @@ import java.util.zip.ZipFile;
  * @see http://www.devx.com/getHelpOn/10MinuteSolution/20447
  */
 public class Unzip {
+
+	private Logger logger = Logger.getLogger(Unzip.class);
 
 	public static final void copyInputStream(InputStream in, OutputStream out)
 			throws IOException {
@@ -30,9 +35,9 @@ public class Unzip {
 		out.close();
 	}
 
-	public Unzip(File file, String destination) throws Exception {
+	public Unzip(File file, String destination) throws UnzipException {
 
-		System.out.println("(1) Extracting " + file + " to " + destination);
+		this.logger.info("Extracting " + file + " to " + destination);
 
 		// TODO: Remove the warning
 		@SuppressWarnings("rawtypes")
@@ -47,7 +52,7 @@ public class Unzip {
 		File f = new File(destination);
 		if (f.exists()) {
 			if (!f.isDirectory()) {
-				throw new Exception("The destination is not a directory.");
+				throw new UnzipException("The destination is not a directory.");
 			}
 		} else {
 			f.mkdir();
@@ -63,14 +68,13 @@ public class Unzip {
 				if (entry.isDirectory()) {
 					// Assume directories are stored parents first then
 					// children.
-					System.err.println("Extracting directory: "
-							+ entry.getName());
+					this.logger.info("Extracting directory: " + entry.getName());
 					// This is not robust, just for demonstration purposes.
 					(new File(destination + entry.getName())).mkdir();
 					continue;
 				}
 
-				System.out.println("    Extracting file: " + entry.getName());
+				this.logger.info("Extracting file: " + entry.getName());
 				copyInputStream(zipFile.getInputStream(entry),
 						new BufferedOutputStream(new FileOutputStream(
 								destination + entry.getName())));

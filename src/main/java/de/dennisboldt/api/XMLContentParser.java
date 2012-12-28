@@ -7,6 +7,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -23,9 +24,10 @@ public class XMLContentParser {
 	private Document dom = null;
 	private String documentFileName = null;
 	private String metadataFileName = null;
+	private Logger logger = Logger.getLogger(XMLContentParser.class);
 
 	public XMLContentParser(File file) {
-		System.out.println("(2) Parse the file " + file);
+		this.logger.info("Parse the file " + file);
 		parseXmlFile(file);
 		parseDocument();
 	}

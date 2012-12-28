@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
@@ -41,6 +43,8 @@ public class CreatePDF {
 
 	// parser for the the metadata.xml
 	private XMLMetadataParser meta = null;
+
+	private Logger logger = Logger.getLogger(CreatePDF.class);
 
 	/**
 	 * Inititialize the PDF creator
@@ -78,7 +82,7 @@ public class CreatePDF {
 
 		// The file, which will be annotated in this step
 		File annotatedFile = new File(tmpPath + type.toString() + ".pdf");
-		System.out.println("(4) Create a new PDF of size (" + paperwidth + "," + paperheight + ") at " + annotatedFile.getAbsolutePath());
+		this.logger.info("Create " + annotatedFile.getAbsolutePath()); // of size (" + paperwidth + "," + paperheight + ")
 
 		// Create the canvas to be used to place stuff
 		Rectangle rect = new Rectangle(paperwidth, paperheight);
@@ -91,7 +95,6 @@ public class CreatePDF {
 
 		// Opens the document
 		document.open();
-		System.out.println("    Draw the annotations");
 		for (int i = 0; i < pages; i++) {
 
 			// Get the content, where to add the annotations

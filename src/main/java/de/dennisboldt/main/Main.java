@@ -1,9 +1,13 @@
 package de.dennisboldt.main;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfReader;
 
@@ -11,7 +15,9 @@ import de.dennisboldt.api.AnnotationType;
 import de.dennisboldt.api.CreatePDF;
 import de.dennisboldt.api.MergePDFs;
 import de.dennisboldt.api.MimeType;
+import de.dennisboldt.api.MimeTypeException;
 import de.dennisboldt.api.Unzip;
+import de.dennisboldt.api.UnzipException;
 import de.dennisboldt.api.XMLContentParser;
 import de.dennisboldt.api.XMLMetadataParser;
 
@@ -22,33 +28,39 @@ import de.dennisboldt.api.XMLMetadataParser;
  */
 public class Main {
 
-	public static void main(String[] args) throws Exception {
+	private Logger logger = Logger.getLogger(Main.class);
 
+	public Main(String[] args) {
 		if(args.length != 1) {
-			System.err.println("No Okular file was given.");
+			this.logger.error("No Okular file was given.");
 			System.exit(0);
 		}
 
 		File fileOkular = new File(args[0]);
 
-		/*
-		if("application/zip".trim().equals(MimeType.getMimeType(fileOkular).trim())) {
-			System.out.println("application/zip".trim());
-			System.out.println(MimeType.getMimeType(fileOkular));
-			System.out.println("That is not an Okular file 1!");
-			System.exit(0);
+		try {
+			String mimeTypeFileOkular = MimeType.getMimeType(fileOkular);
+			if(!"application/zip".equals(mimeTypeFileOkular)) {
+				this.logger.warn(fileOkular.getName() + " is not an Okular file");
+			}
+		} catch (MimeTypeException e1) {
+			e1.printStackTrace();
 		}
-		*/
 
 		if(!fileOkular.getName().endsWith(".okular")) {
-			System.out.println("That is not an Okular file 2!");
+			this.logger.info("That is not an Okular file 2!");
 			System.exit(0);
 		}
 
 		String directoryTemp = "/tmp/Okular2PDF/";
 
 		// Step 1: Unzip the Okular file to temp
-		new Unzip(fileOkular, directoryTemp);
+		try {
+			new Unzip(fileOkular, directoryTemp);
+		} catch (UnzipException e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
 
 		// Step 2: Read the content.cml file to get the name of the PDF file and the
 		// name of the metadata XML file
@@ -58,20 +70,32 @@ public class Main {
 
 		File f = new File(directoryTemp + "content.xml");
 		if (!f.exists()) {
-			throw new Exception("The content.cml does not exist.");
+			try {
+				throw new FileNotFoundException("The content.cml does not exist.");
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				System.exit(0);
+			}
 		}
 
 		XMLContentParser xmlContent = new XMLContentParser(f);
 		String fileDocument = directoryTemp + xmlContent.getDocumentFileName();
 		String fileMetadata = directoryTemp + xmlContent.getMetadataFileName();
 
-		String type = MimeType.getMimeType(new File(fileDocument));
+		String type = null;
+		try {
+			type = MimeType.getMimeType(new File(fileDocument));
+		} catch (MimeTypeException e) {
+			e.printStackTrace();
+		}
 
 		String fileSource = null;
 		// PDF files
 		if("application/pdf".equals(type)){
+			this.logger.info("PDF file detected");
 			fileSource = fileDocument;
 		} else if("application/postscript".equals(type)) {
+			//this.logger.info("PS file");
 			// PS files
 			// TODO: ps2pdf
 			/*
@@ -82,15 +106,15 @@ public class Main {
 			p1.waitFor();
 			 */
 
-			System.out.println("PS not supported yet.");
+			this.logger.info("PS not supported yet.");
 			System.exit(0);
 		} else if("application/x-dvi".equals(type)) {
 			// DVI files
 			// TODO: ps2pdf
-			System.out.println("DVI not supported yet.");
+			this.logger.info("DVI not supported yet.");
 			System.exit(0);
 		} else {
-			System.out.println("The mime type " + type + "not supported yet.");
+			this.logger.info("The mime type " + type + "not supported yet.");
 			System.exit(0);
 		}
 
@@ -98,19 +122,37 @@ public class Main {
 		XMLMetadataParser meta = new XMLMetadataParser(fileMetadata);
 
 		// Step 4: Create temporarily PDF files
-		PdfReader reader = new PdfReader(fileSource);
+		PdfReader reader = null;
+		try {
+			reader = new PdfReader(fileSource);
+		} catch (IOException e) {
+			this.logger.info("Cannot read " + new File(fileSource).getName());
+			e.printStackTrace();
+		}
 		Rectangle psize = reader.getPageSize(1);
 
 		// Yellow Highlighter
-		CreatePDF pdf = new CreatePDF(psize.getWidth(), psize.getHeight(), directoryTemp, reader.getNumberOfPages(), meta);
-		File file_inline_note = pdf.doAnnotation(AnnotationType.INLINE_NOTE);
-		File file_pdf_note = pdf.doAnnotation(AnnotationType.PDF_NOTE);
-		File file_yellow_highlighter = pdf.doAnnotation(AnnotationType.YELLOW_HIGHLIGHTER);
+		File file_inline_note = null;
+		File file_pdf_note = null;
+		File file_yellow_highlighter = null;
+		try {
+			CreatePDF pdf = new CreatePDF(psize.getWidth(), psize.getHeight(), directoryTemp, reader.getNumberOfPages(), meta);
+			file_inline_note = pdf.doAnnotation(AnnotationType.INLINE_NOTE);
+			file_pdf_note = pdf.doAnnotation(AnnotationType.PDF_NOTE);
+			file_yellow_highlighter = pdf.doAnnotation(AnnotationType.YELLOW_HIGHLIGHTER);
+		} catch (FileNotFoundException e) {
+			this.logger.warn("Cannot create the new file");
+			e.printStackTrace();
+			System.exit(0);
+		} catch (DocumentException e) {
+			this.logger.warn("Cannot create the new file");
+			e.printStackTrace();
+			System.exit(0);
+		}
+
 		File fileOutput = new File(fileOkular  + ".annotated.pdf");
 		File tmp0 = new File(directoryTemp + "temp0.pdf");
 		File tmp1 = new File(directoryTemp + "temp1.pdf");
-
-		System.out.println("(5) Merge files");
 
 		new MergePDFs(new File(fileSource), file_yellow_highlighter, tmp0);
 		new MergePDFs(file_inline_note, tmp0, tmp1);
@@ -119,12 +161,19 @@ public class Main {
 		// Clean tempfolder
 		File tmpDir = new File(directoryTemp);
 		if(tmpDir.exists() && tmpDir.isDirectory()) {
-			System.out.println("(5) Clean dir " + tmpDir.getAbsolutePath());
-			FileUtils.deleteDirectory(tmpDir);
+			this.logger.info("Clean dir " + tmpDir.getAbsolutePath());
+			try {
+				FileUtils.deleteDirectory(tmpDir);
+			} catch (IOException e) {
+				this.logger.error("Cannot delete folder: " + tmpDir);
+				e.printStackTrace();
+			}
 		}
-		System.out.println();
-		System.out.println("The new PDF file has been created:");
-		System.out.println(fileOutput.getAbsolutePath());
+		this.logger.info("The new PDF file has been created: " + fileOutput.getAbsolutePath());
+	}
+
+	public static void main(String[] args) throws Exception {
+		new Main(args);
 	}
 
 }

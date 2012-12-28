@@ -10,6 +10,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -30,9 +31,10 @@ public class XMLMetadataParser {
 
 	private Document dom = null;
 	private List<Page> pages = new LinkedList<Page>();
+	private Logger logger = Logger.getLogger(XMLMetadataParser.class);
 
 	public XMLMetadataParser(String file) {
-		System.out.println("(3) Parse the file " + file);
+		this.logger.info("Parse the file " + file);
 		parseXmlFile(file);
 		parseDocument();
 	}
@@ -61,7 +63,7 @@ public class XMLMetadataParser {
 		Element docEle = dom.getDocumentElement();
 
 		NodeList pages = docEle.getElementsByTagName("page");
-		//System.out.println("Pages: " + pages.getLength());
+		this.logger.debug("Pages: " + pages.getLength());
 
 		if(pages != null && pages.getLength() > 0) {
 			for(int i = 0 ; i < pages.getLength();i++) {
@@ -69,7 +71,7 @@ public class XMLMetadataParser {
 				//get the page element
 				Element page = (Element) pages.item(i);
 				Integer number = Integer.parseInt(page.getAttribute("number"));
-				System.out.println("    Parse page number " + number);
+				this.logger.info("Parse page number " + number);
 
 				Page pageOkular = new Page(number);
 				this.pages.add(pageOkular);
@@ -80,7 +82,7 @@ public class XMLMetadataParser {
 					for(int j = 0 ; j < annotations.getLength(); j++) {
 						Element annotation = (Element) annotations.item(j);
 						Integer type = Integer.parseInt(annotation.getAttribute("type"));
-						//System.out.println("  Annotation type:" + type);
+						this.logger.debug("  Annotation type:" + type);
 
 						String color = null;
 						String author = null;
@@ -125,10 +127,10 @@ public class XMLMetadataParser {
 								Double b = Double.parseDouble(boundary.getAttribute("dy"));
 
 								annotationOkular = new Annotation(l, r, t, b, AnnotationType.YELLOW_HIGHLIGHTER);
-								//System.out.println("    l: " + l);
-								//System.out.println("    r: " + r);
-								//System.out.println("    t: " + t);
-								//System.out.println("    b: " + b);
+								logger.debug("    l: " + l);
+								logger.debug("    r: " + r);
+								logger.debug("    t: " + t);
+								logger.debug("    b: " + b);
 							}
 						}
 						// Type 1: Inline note
@@ -165,37 +167,37 @@ public class XMLMetadataParser {
 										annotationOkular.setText("Author: " + author + "\n" + contents);
 									}
 								} else {
-									System.out.println("WARNING: Unknown summary type (" + summary + ")");
-									System.out.println("XML:");
+									this.logger.debug("WARNING: Unknown summary type (" + summary + ")");
+									this.logger.debug("XML:");
 									try {
 										// @see: http://stackoverflow.com/a/1219806/605890
 										Document document = annotation.getOwnerDocument();
 										DOMImplementationLS domImplLS = (DOMImplementationLS) document.getImplementation();
 										LSSerializer serializer = domImplLS.createLSSerializer();
 										String str = serializer.writeToString(annotation);
-										System.out.println(str);
+										this.logger.debug(str);
 									} catch (Exception e) {
-										System.out.println("Exception: XML not readable.");
+										this.logger.debug("Exception: XML not readable.");
 									} catch (Error e) {
-										System.out.println("Error: XML not readable.");
+										this.logger.debug("Error: XML not readable.");
 									}
 									continue;
 								}
 							}
 						} else {
-							System.out.println("WARNING: Unknown annotation type (" + type + ")");
-							System.out.println("XML:");
+							this.logger.debug("WARNING: Unknown annotation type (" + type + ")");
+							this.logger.debug("XML:");
 							try {
 								// @see: http://stackoverflow.com/a/1219806/605890
 								Document document = annotation.getOwnerDocument();
 								DOMImplementationLS domImplLS = (DOMImplementationLS) document.getImplementation();
 								LSSerializer serializer = domImplLS.createLSSerializer();
 								String str = serializer.writeToString(annotation);
-								System.out.println(str);
+								this.logger.debug(str);
 							} catch (Exception e) {
-								System.out.println("Exception: XML not readable.");
+								this.logger.debug("Exception: XML not readable.");
 							} catch (Error e) {
-								System.out.println("Error: XML not readable.");
+								this.logger.debug("Error: XML not readable.");
 							}
 							continue;
 						}

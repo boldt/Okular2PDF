@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.text.DecimalFormat;
 
+import org.apache.log4j.Logger;
+
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfImportedPage;
@@ -19,6 +21,8 @@ import com.lowagie.text.pdf.PdfStamper;
  */
 public class MergePDFs {
 
+	private Logger logger = Logger.getLogger(MergePDFs.class);
+
 	/**
 	 * Merges to PDFs such that one will be the background and one will be the
 	 * foreround.
@@ -32,8 +36,7 @@ public class MergePDFs {
 	 */
 	public MergePDFs(File foreground, File background, File newFile) {
 
-		System.out.println("    Merge " + foreground + " (FG) and " + background
-				+ " (BG) to " + newFile);
+		this.logger.info("Merge " + foreground + " (FG) and " + background + " (BG) to " + newFile);
 
 		try {
 			// the document we're watermarking
@@ -56,14 +59,10 @@ public class MergePDFs {
 			DecimalFormat df = new DecimalFormat("0.00");
 			if (!df.format(fg_size.getHeight()).equals(df.format(bg_size.getHeight()))
 					|| !df.format(fg_size.getWidth()).equals(df.format(bg_size.getWidth()))) {
-				System.err
-						.println("Geoemetry of the documents is not the same.");
-				System.err.println(fg_size.getHeight() + "!="
-						+ bg_size.getHeight());
-				System.err.println(fg_size.getWidth() + "!="
-						+ bg_size.getWidth());
-				System.exit(0);
-
+				throw new MergePDFsException("Geoemetry of the documents is not the same." +
+						fg_size.getHeight() + "!=" + bg_size.getHeight() +
+						fg_size.getWidth() + "!=" + bg_size.getWidth()
+						);
 			}
 
 			// the output document

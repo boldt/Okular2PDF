@@ -12,15 +12,14 @@ import net.sf.jmimemagic.MagicMatch;
  */
 public class MimeType {
 
-	public static String getMimeType(File file) throws java.io.IOException {
+	public static String getMimeType(File file) throws MimeTypeException {
 		// Works well
 		try {
 			MagicMatch match = Magic.getMagicMatch(file, false);
 			return match.getMimeType();
 		} catch (Exception e) {
+			throw new MimeTypeException(e.getMessage());
 		}
-
-		return null;
 	}
 
 }

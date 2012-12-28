@@ -1,11 +1,7 @@
-- Use log4j
-  - Log levels
 - Clean use of the parameter
 - License
 - Next annotations
   - Black underlining
   - Cyan Ellipse
-- mvn install -- installation on the linux system
-- MimeTypeCheck
-- Warning: log4j:WARN No appenders could be found for logger (net.sf.jmimemagic.Magic).
+- makefile to install/deinstall Okular2PDF on the linux system
 - PDfAnnotations does not work 100%
